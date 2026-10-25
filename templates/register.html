@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block body_style %}style="background-image: url('{{ url_for('static', filename='images/img12.jpg') }}'); background-size: cover; background-position: center; background-attachment: fixed; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;"{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Employee Registration</h2>
+    <p>Register to request access to the Ration Shop system.</p>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <input type="text" name="username" placeholder="Create a Username" required>
+        <input type="password" name="password" placeholder="Create a Password" required>
+        <button class="btn btn-primary" type="submit" style="margin-top: 10px;">Apply for Access</button>
+    </form>
+    
+    <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 15px;">
+        <p style="font-size: 13px; color: #ddd;">Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 style="margin-bottom: 15px;">Owner Dashboard</h2>
+
+<div class="card" style="background: linear-gradient(135deg, #2c3e50, #4ca1af); color: white; border: none; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+    <h3 style="color: #ddd; margin: 0; font-size: 14px; text-transform: uppercase;">Total Revenue</h3>
+    <h1 style="margin: 0; font-size: 32px; font-weight: bold;">₹{{ revenue }}</h1>
+</div>
+
+<div class="dashboard-grid">
+    <!-- Inventory Management -->
+    <div class="card">
+        <h3>Inventory Management</h3>
+        <table>
+            <tr>
+                <th>Item</th>
+                <th>Price/kg</th>
+                <th>Stock</th>
+                <th style="text-align: right;">Actions</th>
+            </tr>
+            {% for item in inventory %}
+            <tr>
+                <td style="font-weight: 600;">
+                    {{ item.item_name }}
+                    {% if item.quantity_kg < 50 %}
+                        <br><span class="badge badge-warning" style="margin-top: 3px;">⚠️ Low Stock</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <form action="{{ url_for('update_price', item_id=item.id) }}" method="POST" style="display: flex; gap: 5px; margin:0; align-items: center;">
+                        <span>₹</span>
+                        <input type="number" step="0.01" name="new_price" value="{{ item.price_per_kg }}" style="width: 70px; padding: 4px; margin: 0;">
+                        <button type="submit" class="btn btn-primary btn-sm" style="padding: 4px 8px;">Update</button>
+                    </form>
+                </td>
+                <td>{{ item.quantity_kg }} kg</td>
+                <td style="text-align: right;">
+                    <a href="{{ url_for('delete_item', item_id=item.id) }}" class="btn btn-danger btn-sm" style="padding: 4px 8px;" onclick="return confirm('Delete {{ item.item_name }}?');">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+        
+        <h3>Add New Item</h3>
+        <form action="{{ url_for('add_item') }}" method="POST" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <input type="text" name="item_name" placeholder="Item Name" required style="flex: 1; min-width: 120px; margin: 0; padding: 8px;">
+            <input type="number" step="0.01" name="price" placeholder="Price/kg (₹)" required style="width: 110px; margin: 0; padding: 8px;">
+            <input type="number" name="quantity" placeholder="Stock (kg)" required style="width: 100px; margin: 0; padding: 8px;">
+            <button class="btn btn-primary" type="submit" style="width: auto; padding: 8px 15px;">Add</button>
+        </form>
+    </div>
+
+    <!-- Pending Employees -->
+    <div class="card">
+        <h3>Pending Employees</h3>
+        {% if pending %}
+            <ul style="list-style: none; padding: 0;">
+                {% for emp in pending %}
+                <li style="padding: 10px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 600;">{{ emp.username }}</span>
+                    <a href="{{ url_for('approve_employee', user_id=emp.id) }}" class="btn btn-success btn-sm">Approve</a>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p style="color: #888; font-size: 13px; text-align: center; margin-top: 15px;">No pending requests.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

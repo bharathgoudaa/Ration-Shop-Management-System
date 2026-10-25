@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 style="margin-bottom: 15px;">Manage Staff</h2>
+
+<div class="card">
+    <table>
+        <tr>
+            <th>Username</th>
+            <th>Current Status</th>
+            <th style="text-align: right;">Action</th>
+        </tr>
+        {% for emp in staff %}
+        <tr>
+            <td style="font-weight: 600;">{{ emp.username|capitalize }}</td>
+            <td>
+                {% if emp.role == 'employee' %}
+                    <span class="badge badge-success">Active</span>
+                {% else %}
+                    <span class="badge badge-warning" style="background: #f8d7da; color: #721c24;">Suspended</span>
+                {% endif %}
+            </td>
+            <td style="text-align: right;">
+                {% if emp.role == 'employee' %}
+                    <a href="{{ url_for('toggle_staff', user_id=emp.id, new_role='suspended') }}" class="btn btn-danger btn-sm" onclick="return confirm('Suspend {{ emp.username }}? They will not be able to log in.');">Suspend (Fire)</a>
+                {% else %}
+                    <a href="{{ url_for('toggle_staff', user_id=emp.id, new_role='employee') }}" class="btn btn-success btn-sm">Re-Activate</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3" style="text-align: center; padding: 30px; color: #888;">No staff members found.</td></tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

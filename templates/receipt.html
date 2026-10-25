@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card" style="max-width: 400px; margin: 40px auto; font-family: 'Courier New', Courier, monospace; padding: 30px;">
+    <div style="text-align: center; margin-bottom: 20px;">
+        <h2 style="margin: 0; color: #000; font-size: 20px;">RATION SHOP RECEIPT</h2>
+        <p style="color: #666; font-size: 12px; margin-top: 5px;">Receipt #{{ sale.id }}</p>
+    </div>
+    
+    <div style="border-top: 1px dashed #ccc; border-bottom: 1px dashed #ccc; padding: 15px 0; margin-bottom: 15px; font-size: 14px;">
+        <p><strong>Date:</strong> {{ sale.date }}</p>
+        <p><strong>Employee:</strong> {{ sale.employee_username|capitalize }}</p>
+        <p><strong>Customer:</strong> {{ sale.customer_name }}</p>
+        <p><strong>Phone:</strong> {{ sale.customer_phone }}</p>
+    </div>
+    
+    <table style="width: 100%; font-size: 14px; border: none;">
+        <tr>
+            <th style="background: none; border-bottom: 1px dashed #ccc; padding-left: 0;">Item</th>
+            <th style="background: none; border-bottom: 1px dashed #ccc; text-align: center;">Qty</th>
+            <th style="background: none; border-bottom: 1px dashed #ccc; text-align: right; padding-right: 0;">Total</th>
+        </tr>
+        {% for item in items %}
+        <tr>
+            <td style="padding: 8px 0; border-bottom: none;">{{ item.item_name }}</td>
+            <td style="text-align: center; border-bottom: none;">{{ item.quantity_sold }}kg</td>
+            <td style="text-align: right; padding-right: 0; border-bottom: none;">₹{{ item.price_at_sale * item.quantity_sold }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    <div style="border-top: 1px dashed #ccc; margin-top: 15px; padding-top: 15px; text-align: right;">
+        <h3 style="margin: 0; color: #000;">Total: ₹{{ sale.total_amount }}</h3>
+    </div>
+    
+    <p style="text-align: center; font-size: 12px; color: #888; margin-top: 30px;">Thank you for your business!</p>
+    
+    <div style="text-align: center; margin-top: 20px;">
+        <button onclick="window.print()" class="btn btn-primary" style="width: auto; background: #2c3e50;">Print Receipt</button>
+        <a href="{{ url_for('history') }}" class="btn btn-sm" style="color: #666; background: #eee; margin-left: 10px;">Go Back</a>
+    </div>
+</div>
+{% endblock %}

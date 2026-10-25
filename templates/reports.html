@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 style="margin-bottom: 15px;">Business Reports & Analytics</h2>
+
+<div class="dashboard-grid">
+    <!-- The Graph Card -->
+    <div class="card">
+        <h3>Top Selling Items (kg)</h3>
+        <canvas id="salesChart" style="max-height: 180px; width: 100%;"></canvas>
+    </div>
+
+    <!-- Employee Performance -->
+    <div class="card">
+        <h3>Employee Performance</h3>
+        <table>
+            <tr>
+                <th>Employee</th>
+                <th>Sales</th>
+                <th>Revenue</th>
+            </tr>
+            {% for emp in employee_reports %}
+            <tr>
+                <td style="font-weight: 600;">{{ emp.employee_username|capitalize }}</td>
+                <td>{{ emp.total_sales }}</td>
+                <td style="color: #28a745; font-weight: bold;">₹{{ emp.total_revenue }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="3" style="text-align: center; color: #888;">No data.</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+<!-- Top Selling Items Table (Full width below) -->
+<div class="card">
+    <h3>Item Sales Breakdown</h3>
+    <table>
+        <tr>
+            <th>Item Name</th>
+            <th>Total Sold</th>
+            <th style="text-align: right;">Revenue Generated</th>
+        </tr>
+        {% for item in item_reports %}
+        <tr>
+            <td style="font-weight: 600;">{{ item.item_name }}</td>
+            <td>{{ item.total_qty }} kg</td>
+            <td style="text-align: right; color: #28a745; font-weight: bold;">₹{{ item.total_revenue }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    const itemNames = {{ item_names | safe }};
+    const itemQuantities = {{ item_quantities | safe }};
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: itemNames,
+            datasets: [{
+                label: 'Quantity Sold (kg)',
+                data: itemQuantities,
+                backgroundColor: 'rgba(255, 152, 0, 0.7)',
+                borderColor: 'rgba(255, 152, 0, 1)',
+                borderWidth: 1,
+                borderRadius: 4,
+                barThickness: 40
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, grid: { color: '#f0f0f0' } },
+                x: { grid: { display: false } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+</script>
+{% endblock %}

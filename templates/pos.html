@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block body_style %}style="background-image: url('{{ url_for('static', filename='images/img7.jpg') }}'); background-size: cover; background-position: center; background-attachment: fixed;"{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+    <h2 style="margin: 0; color: white; text-shadow: 1px 1px 4px rgba(0,0,0,0.8);">POS Terminal</h2>
+    <div class="badge badge-success" style="font-size: 14px; padding: 8px 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
+        Your Sales Today: ₹{{ today_total }}
+    </div>
+</div>
+
+<form method="POST" class="pos-grid">
+    <!-- Items List -->
+    <div class="card" style="padding: 10px 15px;">
+        <h3>Select Items</h3>
+        <table>
+            <tr>
+                <th>Item</th>
+                <th>Price/kg</th>
+                <th>Available</th>
+                <th>Quantity</th>
+            </tr>
+            {% for item in inventory %}
+            <tr>
+                <td style="font-weight: 600;">{{ item.item_name }}</td>
+                <td>₹{{ item.price_per_kg }}</td>
+                <td>{{ item.quantity_kg }} kg</td>
+                <td>
+                    <input type="number" name="qty_{{ item.item_name }}" min="0" max="{{ item.quantity_kg }}" placeholder="0" style="width: 80px; margin: 0; padding: 6px;">
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <!-- Customer & Checkout -->
+    <div class="card" style="position: sticky; top: 15px; padding: 15px;">
+        <h3>Customer Details</h3>
+        <input type="text" name="cust_name" placeholder="Customer Name" required style="padding: 8px;">
+        <input type="text" name="cust_phone" placeholder="Mobile Number" required style="padding: 8px; margin-bottom: 10px;">
+        
+        <button class="btn btn-primary" type="submit" style="padding: 12px; font-size: 15px;">
+            Checkout & Generate Bill
+        </button>
+    </div>
+</form>
+
+<!-- 4 IMAGES GALLERY SECTION -->
+<div class="card" style="margin-top: 20px;">
+    <h3 style="margin-bottom: 15px; color: #2c3e50; font-size: 16px;">Warehouse Gallery</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px;">
+        <img src="{{ url_for('static', filename='images/img1.jpg') }}" alt="Gallery 1" style="width: 100%; height: 140px; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+        
+        <img src="{{ url_for('static', filename='images/img3.jpg') }}" alt="Gallery 3" style="width: 100%; height: 140px; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+        
+        <img src="{{ url_for('static', filename='images/img4.jpg') }}" alt="Gallery 4" style="width: 100%; height: 140px; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+        
+        <img src="{{ url_for('static', filename='images/img5.jpg') }}" alt="Gallery 5" style="width: 100%; height: 140px; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+    </div>
+</div>
+
+<!-- QR Code Modal -->
+{% if show_qr %}
+<div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000;">
+    <div class="card" style="text-align: center; max-width: 350px; width: 90%; padding: 20px;">
+        <h2 style="color: #28a745; margin-bottom: 5px;">Bill Generated!</h2>
+        <h1 style="font-size: 35px; margin: 5px 0; color: #2c3e50;">₹{{ total_bill }}</h1>
+        <p style="color: #666; margin-bottom: 15px; font-size: 13px;">Ask the customer to scan to pay.</p>
+        
+        <img src="{{ url_for('static', filename='images/payment_qr.jpg') }}" alt="Payment QR" style="width: 200px; height: 200px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        
+        <a href="{{ url_for('pos') }}" class="btn btn-success" style="display: block; padding: 12px; font-size: 15px;">
+            Payment Received & Close
+        </a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

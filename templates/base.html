@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ration Shop Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body {% block body_style %}{% endblock %}>
+
+    <!-- Navigation Bar -->
+    {% if session.get('logged_in') %}
+    <nav style="background: #2c3e50; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); position: relative; z-index: 10;">
+        <h2 style="margin: 0; font-size: 20px; font-weight: 600; letter-spacing: 0.5px; color: white;">🏪 Ration Shop System</h2>
+        <div style="display: flex; align-items: center;">
+            {% if session.get('role') == 'owner' %}
+                <a href="{{ url_for('owner_dashboard') }}" style="color: #ddd; margin-right: 20px; text-decoration: none; font-weight: 500;">Dashboard</a>
+                <a href="{{ url_for('manage_staff') }}" style="color: #ddd; margin-right: 20px; text-decoration: none; font-weight: 500;">Manage Staff</a>
+                <a href="{{ url_for('reports') }}" style="color: #ddd; margin-right: 20px; text-decoration: none; font-weight: 500;">Reports</a>
+                <a href="{{ url_for('history') }}" style="color: #ddd; margin-right: 20px; text-decoration: none; font-weight: 500;">History</a>
+            {% endif %}
+            
+            {% if session.get('role') == 'employee' %}
+                <a href="{{ url_for('pos') }}" style="color: #ddd; margin-right: 20px; text-decoration: none; font-weight: 500;">Sales Terminal</a>
+                <a href="{{ url_for('history') }}" style="color: #ddd; margin-right: 20px; text-decoration: none; font-weight: 500;">My History</a>
+            {% endif %}
+            
+            <span style="color: #888; margin-right: 20px; font-size: 14px; border-left: 1px solid #555; padding-left: 20px;">
+                {{ session.get('username')|capitalize }} ({{ session.get('role')|capitalize }})
+            </span>
+            <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm" style="text-decoration: none;">Logout</a>
+        </div>
+    </nav>
+    {% endif %}
+
+    <!-- Alerts -->
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 10;">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert {{ category }}" style="margin-top: 15px;">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Body -->
+    <div {% if session.get('logged_in') %}class="main-content"{% endif %}>
+        {% block content %}{% endblock %}
+    </div>
+
+</body>
+</html>
